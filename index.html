@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Asistencia con Nube</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --primary-hover: #1557b0;
+            --border: #cbd5e1;
+            --bg-ausente: #f1f5f9;
+            --text-ausente: #94a3b8;
+        }
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            margin: 0; 
+            padding: 30px;
+            background-color: #f8fafc; 
+            color: #1e293b;
+        }
+        .pantalla-inicio {
+            max-width: 450px;
+            margin: 60px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .pantalla-inicio h1 { color: var(--primary); margin-bottom: 10px; font-size: 24px; }
+        .pantalla-inicio p { color: #64748b; margin-bottom: 30px; font-size: 14px; }
+        .grupo-control { text-align: left; margin-bottom: 20px; }
+        .grupo-control label { display: block; font-weight: 600; margin-bottom: 8px; color: #475569; font-size: 14px; }
+        .grupo-control select, .grupo-control input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 15px; box-sizing: border-box; background-color: #f8fafc; }
+        .btn-ingresar { width: 100%; background-color: var(--primary); color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
+        .btn-ingresar:hover { background-color: var(--primary-hover); }
+        .seccion-planilla { display: none; }
+        .header-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .info-reporte { display: flex; gap: 20px; margin-top: 5px; font-size: 14px; color: #64748b; }
+        .badge { background: #e2e8f0; padding: 2px 8px; border-radius: 4px; font-weight: bold; color: #334155; }
+        .botones-acciones { display: flex; gap: 10px; }
+        .btn-pdf { background-color: #dc2626; color: white; border: none; padding: 10px 15px; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: background 0.2s; }
+        .btn-pdf:hover { background-color: #b91c1c; }
+        .btn-volver { background-color: #64748b; color: white; border: none; padding: 10px 15px; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: background 0.2s; }
+        .btn-volver:hover { background-color: #475569; }
+        table { border-collapse: collapse; width: 100%; background: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden; }
+        th, td { border: 1px solid var(--border); padding: 10px 5px; text-align: center; }
+        th { background-color: #f1f5f9; color: #475569; font-size: 12px; text-transform: uppercase; }
+        .th-vertical { writing-mode: vertical-lr; transform: rotate(180deg); padding: 15px 5px; text-align: left; font-weight: bold; }
+        .col-nombre { text-align: left; font-weight: 600; width: 220px; padding-left: 15px; }
+        .col-asistencia { width: 45px; }
+        .col-nota { width: 110px; }
+        .col-observacion { width: 220px; }
+        select.table-select { padding: 5px 2px; font-weight: bold; border-radius: 4px; border: 1px solid var(--border); cursor: pointer; text-align: center; font-size: 14px; width: 40px; }
+        select.p-status { color: #16a34a; background-color: #f0fdf4; border-color: #bbf7d0; }
+        select.a-status { color: #dc2626; background-color: #fef2f2; border-color: #fca5a5; }
+        .txt-obs { width: 95%; min-height: 28px; height: 28px; padding: 4px 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 12px; font-family: inherit; box-sizing: border-box; color: #334155; resize: none; overflow-y: hidden; display: block; margin: 0 auto; }
+        .txt-obs:focus { border-color: var(--primary); outline: none; background-color: #fff; }
+        .ausente-row { background-color: var(--bg-ausente); color: var(--text-ausente); }
+        .ausente-row input[type="checkbox"] { pointer-events: none; opacity: 0.1; }
+        .ausente-row .col-nombre { color: var(--text-ausente); }
+        .ausente-row .barra-relleno { background: #cbd5e1 !important; width: 0% !important; }
+        .ausente-row .txt-obs { background-color: #f1f5f9; color: #94a3b8; }
+        input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+        .progreso-contenedor { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .puntos-txt { font-size: 11px; font-weight: bold; color: #64748b; }
+        .barra-progreso-custom { width: 90px; height: 12px; background-color: #e2e8f0; border: 1px solid #cbd5e1; border-radius: 10px; overflow: hidden; position: relative; }
+        .barra-relleno { height: 100%; width: 100%; background: #16a34a; transition: width 0.3s ease, background-color 0.3s ease; }
+        @media print {
+            body { background: white; padding: 0; margin: 0; }
+            .pantalla-inicio, .botones-acciones { display: none !important; }
+            .seccion-planilla { display: block !important; }
+            table { box-shadow: none; }
+            select.table-select { border: none; appearance: none; -webkit-appearance: none; background: transparent; padding: 0; width: auto; }
+            .txt-obs { border: none; background: transparent; padding: 0; width: 100%; height: auto !important; min-height: 0; overflow: visible; white-space: pre-wrap; word-wrap: break-word; text-align: left; }
+            .barra-progreso-custom, .barra-relleno { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="menu-inicial" class="pantalla-inicio">
+        <h1>Registro en la Nube</h1>
+        <p>Los cambios se guardarán automáticamente en todos tus dispositivos</p>
+        <div class="grupo-control">
+            <label for="input-fecha">Fecha de la clase:</label>
+            <input type="date" id="input-fecha">
+        </div>
+        <div class="grupo-control">
+            <label for="select-materia">Curso / Materia:</label>
+            <select id="select-materia">
+                <option value="7° Grado - Historia y Geografía">7° Grado - Historia y Geografía</option>
+                <option value="8° Grado - Historia y Geografía">8° Grado - Historia y Geografía</option>
+                <option value="8° Grado - Informática">8° Grado - Informática</option>
+                <option value="9° Grado - Historia y Geografía">9° Grado - Historia y Geografía</option>
+                <option value="9° Grado - Informática">9° Grado - Informática</option>
+                <option value="9° Grado - Formación Ética y Ciudadana">9° Grado - Formación Ética y Ciudadana</option>
+                <option value="1° Curso - Historia y Geografía">1° Curso - Historia y Geografía</option>
+                <option value="2° Curso - Historia y Geografía">2° Curso - Historia y Geografía</option>
+                <option value="2° Curso - Filosofía">2° Curso - Filosofía</option>
+                <option value="3° Curso - Historia y Geografía">3° Curso - Historia y Geografía</option>
+                <option value="3° Curso - Política">3° Curso - Política</option>
+                <option value="3° Curso - Sociología">3° Curso - Sociología</option>
+            </select>
+        </div>
+        <button class="btn-ingresar" onclick="entrarAPlanilla()">Abrir Registro Conectado →</button>
+    </div>
+
+    <div id="seccion-planilla" class="seccion-planilla">
+        <div class="header-container">
+            <div>
+                <h2 style="margin:0;">Control de Asistencia (Sincronizado)</h2>
+                <div class="info-reporte">
+                    <span>Fecha: <span id="reporte-fecha" class="badge"></span></span>
+                    <span>Clase: <span id="reporte-curso" class="badge"></span></span>
+                    <span id="estado-nube" style="color:#16a34a; font-weight:bold;">● Conectado a la nube</span>
+                </div>
+            </div>
+            <div class="botones-acciones">
+                <button class="btn-volver" onclick="volverAlMenu()">⬅ Volver</button>
+                <button class="btn-pdf" onclick="exportarPDF()">📥 Guardar PDF</button>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th class="col-nombre">Estudiante</th>
+                    <th class="th-vertical col-asistencia">Asistencia</th>
+                    <th class="th-vertical">Act 1</th><th class="th-vertical">Act 2</th><th class="th-vertical">Act 3</th>
+                    <th class="th-vertical">Act 4</th><th class="th-vertical">Act 5</th><th class="th-vertical">Act 6</th>
+                    <th class="th-vertical">Act 7</th><th class="th-vertical">Act 8</th><th class="th-vertical">Act 9</th>
+                    <th class="th-vertical">Act 10</th>
+                    <th class="th-vertical col-nota">Nota / Puntaje</th>
+                    <th class="col-observacion">Observaciones</th>
+                </tr>
+            </thead>
+            <tbody id="tabla-cuerpo"></tbody>
+        </table>
+    </div>
+
+    <script>
+        // =================================================================
+        // PASO FINAL: PEGA AQUÍ ABAJO TUS DATOS DE FIREBASE
+        // =================================================================
+        
+        const firebaseConfig = {
+  apiKey: "AIzaSyC6X63w2PKh6F7e-Rx9TxkP8Jy-iJBn6EY",
+  authDomain: "misnotasescolares-65e9f.firebaseapp.com",
+  databaseURL: "https://misnotasescolares-65e9f-default-rtdb.firebaseio.com",
+  projectId: "misnotasescolares-65e9f",
+  storageBucket: "misnotasescolares-65e9f.firebasestorage.app",
+  messagingSenderId: "213859418577",
+  appId: "1:213859418577:web:52dae4504094be9a9420f0",
+  measurementId: "G-LBEX51GBWP"
+		};
+
+        
+        // =================================================================
+
+        if(firebaseConfig.apiKey !== "TU_API_KEY") {
+            firebase.initializeApp(firebaseConfig);
+        }
+
+        const alumnos = [
+            "Álvarez, Juan", "Benítez, María", "Castro, Carlos", "Díaz, Ana", "Espínola, Luis",
+            "Fernández, Elena", "Gómez, Pedro", "López, Laura", "Martínez, Jorge", "Ramírez, Sofía"
+        ];
+
+        let fechaClave = ""; let cursoClave = ""; let pathNube = "";
+        document.getElementById('input-fecha').valueAsDate = new Date();
+
+        function entrarAPlanilla() {
+            fechaClave = document.getElementById('input-fecha').value;
+            cursoClave = document.getElementById('select-materia').value;
+            if(!fechaClave) return alert("Selecciona una fecha.");
+            let cursoSanitizado = cursoClave.replace(/[.#$/\[\]]/g, "-");
+            pathNube = `planillas/${fechaClave}/${cursoSanitizado}`;
+            const partesFecha = fechaClave.split('-');
+            const fechaObjeto = new Date(partesFecha[0], partesFecha[1] - 1, partesFecha[2]);
+            document.getElementById('reporte-fecha').innerText = fechaObjeto.toLocaleDateString('es-ES', {year:'numeric', month:'long', day:'numeric'});
+            document.getElementById('reporte-curso').innerText = cursoClave;
+            document.getElementById('menu-inicial').style.display = 'none';
+            document.getElementById('seccion-planilla').style.display = 'block';
+            construirTablaBase();
+
+            if(typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+                document.getElementById('estado-nube').innerText = "⏳ Cargando datos...";
+                firebase.database().ref(pathNube).on('value', (snapshot) => {
+                    actualizarTablaConDatos(snapshot.val());
+                    document.getElementById('estado-nube').innerText = "● Sincronizado en tiempo real";
+                    document.getElementById('estado-nube').style.color = "#16a34a";
+                });
+            } else {
+                const localData = localStorage.getItem(`local_${fechaClave}_${cursoSanitizado}`);
+                actualizarTablaConDatos(localData ? JSON.parse(localData) : null);
+                document.getElementById('estado-nube').innerText = "⚠️ Modo Local (Sin configuración de nube)";
+                document.getElementById('estado-nube').style.color = "#dc2626";
+            }
+        }
+
+        function volverAlMenu() {
+            if(typeof firebase !== 'undefined' && firebase.apps.length > 0) firebase.database().ref(pathNube).off();
+            document.getElementById('seccion-planilla').style.display = 'none';
+            document.getElementById('menu-inicial').style.display = 'block';
+        }
+
+        function construirTablaBase() {
+            const cuerpo = document.getElementById('tabla-cuerpo');
+            cuerpo.innerHTML = ""; 
+            alumnos.forEach((nombre, index) => {
+                const id = index + 1;
+                let filaHtml = `<tr id="fila-${id}"><td class="col-nombre">${nombre}</td><td><select onchange="actualizarAsistencia(${id})" id="asistencia-${id}" class="table-select p-status"><option value="P">P</option><option value="A">A</option></select></td>`;
+                for (let t = 1; t <= 10; t++) filaHtml += `<td><input type="checkbox" onchange="guardarNube()" id="t${t}-${id}" checked></td>`;
+                filaHtml += `<td class="col-nota"><div class="progreso-contenedor"><div class="barra-progreso-custom"><div id="bar-${id}" class="barra-relleno"></div></div><span class="puntos-txt" id="txt-${id}">10 / 10 Pts (100%)</span></div></td><td class="col-observacion"><textarea id="obs-${id}" class="txt-obs" placeholder="Anotar..." oninput="ajustarAltura(this); guardarNube()"></textarea></td></tr>`;
+                cuerpo.innerHTML += filaHtml;
+            });
+        }
+
+        function actualizarTablaConDatos(datosNube) {
+            alumnos.forEach((_, index) => {
+                const id = index + 1; const registro = datosNube ? datosNube[id] : null;
+                if (registro) {
+                    document.getElementById(`asistencia-${id}`).value = registro.asistencia;
+                    document.getElementById(`obs-${id}`).value = registro.observacion || "";
+                    const selector = document.getElementById(`asistencia-${id}`); const fila = document.getElementById(`fila-${id}`);
+                    if(registro.asistencia === 'A') { selector.className = 'table-select a-status'; fila.classList.add('ausente-row'); }
+                    else { selector.className = 'table-select p-status'; fila.classList.remove('ausente-row'); }
+                    for (let t = 1; t <= 10; t++) document.getElementById(`t${t}-${id}`).checked = registro.actividades ? registro.actividades[t-1] : false;
+                }
+                ajustarAltura(document.getElementById(`obs-${id}`)); calcularProgresoVisual(id);
+            });
+        }
+
+        function ajustarAltura(elemento) { elemento.style.height = '28px'; if (elemento.scrollHeight > 28) elemento.style.height = elemento.scrollHeight + 'px'; }
+
+        function calcularProgresoVisual(id) {
+            const estadoAsistencia = document.getElementById(`asistencia-${id}`).value;
+            const barraRelleno = document.getElementById(`bar-${id}`); const texto = document.getElementById(`txt-${id}`);
+            if (estadoAsistencia === 'A') { barraRelleno.style.width = "0%"; barraRelleno.style.backgroundColor = "#cbd5e1"; texto.innerText = "0 / 10 Pts (0%)"; return; }
+            let puntos = 0; for (let t = 1; t <= 10; t++) { if (document.getElementById(`t${t}-${id}`).checked) puntos++; }
+            let porcentaje = puntos * 10; barraRelleno.style.width = `${porcentaje}%`;
+            barraRelleno.style.backgroundColor = `hsl(${(porcentaje / 100) * 120}, 75%, 42%)`; texto.innerText = `${puntos} / 10 Pts (${porcentaje}%)`;
+        }
+
+        function actualizarAsistencia(id) {
+            const selector = document.getElementById(`asistencia-${id}`);
+            if (selector.value === 'A') { for (let t = 1; t <= 10; t++) document.getElementById(`t${t}-${id}`).checked = false; }
+            else { for (let t = 1; t <= 10; t++) document.getElementById(`t${t}-${id}`).checked = true; }
+            guardarNube();
+        }
+
+        function guardarNube() {
+            let datosPlanilla = {};
+            alumnos.forEach((_, index) => {
+                const id = index + 1; let actividades = [];
+                for (let t = 1; t <= 10; t++) actividades.push(document.getElementById(`t${t}-${id}`).checked);
+                datosPlanilla[id] = { asistencia: document.getElementById(`asistencia-${id}`).value, actividades: actividades, observacion: document.getElementById(`obs-${id}`).value };
+                calcularProgresoVisual(id);
+            });
+            if(typeof firebase !== 'undefined' && firebase.apps.length > 0) firebase.database().ref(pathNube).set(datosPlanilla);
+            else { let cursoSanitizado = cursoClave.replace(/[.#$/\[\]]/g, "-"); localStorage.setItem(`local_${fechaClave}_${cursoSanitizado}`, JSON.stringify(datosPlanilla)); }
+        }
+        function exportarPDF() { window.print(); }
+    </script>
+</body>
+</html>
