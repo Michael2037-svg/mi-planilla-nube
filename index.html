@@ -158,7 +158,6 @@
   appId: "1:213859418577:web:52dae4504094be9a9420f0",
   measurementId: "G-LBEX51GBWP"
 		};
-
         
         // =================================================================
 
@@ -166,20 +165,58 @@
             firebase.initializeApp(firebaseConfig);
         }
 
-        const alumnos = [
-            "Álvarez, Juan", "Benítez, María", "Castro, Carlos", "Díaz, Ana", "Espínola, Luis",
-            "Fernández, Elena", "Gómez, Pedro", "López, Laura", "Martínez, Jorge", "Ramírez, Sofía"
-        ];
+        // Base de datos de alumnos por cursos cargada con Nombre + Apellido
+        const baseAlumnos = {
+            "7° Grado - Historia y Geografía": [
+                "Sofía Micaela Aquino Martínez", "Lucas Sebastian Barreto Román", "Rafael Elias Belen Hildebrandt", "Dahiana Carolina Benítez Silva", "Bianca Gabriela Bobadilla Romero", "Lizzi Abigail Britos Acosta", "Valeria Arami Cáceres Amarilla", "Bianca Fiorella Centurión Amaral", "Dominic César Ian Díaz Alff", "Lucas Gabriel Fleitas Rossi", "Juan Alejandro García Pavón", "Steicy Yuliana Giménez Sandoval", "Yasin Daniel Gomez Servian", "Nora Michelle Gossen Schroeder", "Giuliana Hartmann Lang", "Johannes Sebastian Jürgen Hass Gómez", "Dahiana Hildebrand Ruiz Diaz", "Jhon Arnold Hildebrand Sánchez", "Rosmeri Abigail Insfrán Insaurralde", "Daniela Kaeffer González", "Fiorella Lisette Maldonado Acuña", "Alex Dan Montania Quintana", "Jocias Ezequiel Morán Páez", "Friederike Marie Müller", "Sara Irasema Muñoz Franco", "Valeria Anahí Núñez Peralta", "Aldo Fabian Ozuna Areco", "Oscar Damián Pérez Garcete", "Lucas Emanuel Psosek Da Silva", "Josias Ramón Riquelme Britos", "Richard Adrián Ruiz Diaz González", "Silvia Pilar Anahí Samaniego Franco", "Mía Sofía Lujan Santander Centurión", "David Silva Ruiz", "Eitor Emanuel Slovinski Federizzi", "Jhonnatan Valdez Báez"
+            ],
+            "8° Grado - Historia y Geografía": [
+                "Axel Sebastián Benegas Arce", "Pamela Belinda Brítez Brítez", "José Daniel Britos González", "Kenneth Giovanni Hassán Cabrera Da Silva", "Sany Rebeca Cabrera Ruiz", "Yessica Maribel Candia Osorio", "Yamila Belén Cañete Paiva", "Enzo Isidoro Carballo Britez", "Michael Alem Cibils Eichorn", "Montse Ailyn Cibils Eichorn", "Thiago Nahuel Corvalán Román", "Bianca Cramer Sanguínez", "Gianna Dominique Dávalos", "Jorge Sebastián Díaz Frutos", "Claver Gidson Duarte Alvarez", "Soneide Duarte Ríos", "Bruno Rafael Erig Pech", "Vania Magaly Estigarribia Lugo", "Ana Fiorella González Benítez", "Pedro Martin González Samudio", "Sany Magali Ibarra Cabrera", "Jenny Abigail Ibarra Casco", "Aaron Daisuke Ishigaki", "Liz Kamila Martínez Torres", "Sol Aramí Muñoz Franco", "Claus Tobías Richter Cañete", "Dana Micaela Rodas Bogado", "Belén Rojas Morínigo", "Camila Schroeder Holz", "Robert Duván Segovia Vega", "Verónica Magalí Torres Ruiz", "Joel de Jesús Trinidad Cuevas", "Jonathan David Trinidad Ojeda", "Camila Aylen Trinidad Ortigoza", "Isaac Alejandro Wood Aquino", "Darío Emmanuel Zárate Torales"
+            ],
+            "8° Grado - Informática": [
+                "Axel Sebastián Benegas Arce", "Pamela Belinda Brítez Brítez", "José Daniel Britos González", "Kenneth Giovanni Hassán Cabrera Da Silva", "Sany Rebeca Cabrera Ruiz", "Yessica Maribel Candia Osorio", "Yamila Belén Cañete Paiva", "Enzo Isidoro Carballo Britez", "Michael Alem Cibils Eichorn", "Montse Ailyn Cibils Eichorn", "Thiago Nahuel Corvalán Román", "Bianca Cramer Sanguínez", "Gianna Dominique Dávalos", "Jorge Sebastián Díaz Frutos", "Claver Gidson Duarte Alvarez", "Soneide Duarte Ríos", "Bruno Rafael Erig Pech", "Vania Magaly Estigarribia Lugo", "Ana Fiorella González Benítez", "Pedro Martin González Samudio", "Sany Magali Ibarra Cabrera", "Jenny Abigail Ibarra Casco", "Aaron Daisuke Ishigaki", "Liz Kamila Martínez Torres", "Sol Aramí Muñoz Franco", "Claus Tobías Richter Cañete", "Dana Micaela Rodas Bogado", "Belén Rojas Morínigo", "Camila Schroeder Holz", "Robert Duván Segovia Vega", "Verónica Magalí Torres Ruiz", "Joel de Jesús Trinidad Cuevas", "Jonathan David Trinidad Ojeda", "Camila Aylen Trinidad Ortigoza", "Isaac Alejandro Wood Aquino", "Darío Emmanuel Zárate Torales"
+            ],
+            "9° Grado - Historia y Geografía": [
+                "Josué Yasiel Abadíe Epp", "Alvin Edwards Almada Casco", "Helen Janina Barrios González", "Valeria Abigaíl Barrios Rodríguez", "Ruth Jazmín Castillo Fernández", "Victoria Alheli Chamorro Torales", "Dalila Gissel Chávez Benítez", "Osmar Amilkar Contreras Ozuna", "Andre Paulo De Souza Prunzel", "Pablo Gabriel Del Puerto Galeano", "Diego Ariel Fariña Trinidad", "Mateo Gabriel Fleitas Rossi", "Bianca Nicole Friesen Maldonado", "Marbella Carolina García Pavón", "Zunny Verónica González Gómez", "Grace Amelie Happle", "Braian Fernando Hermes Rodriguez", "Kevin René Maldonado López", "Albert Adán Melgarejo Almada", "Romina Morel Gauto", "Ruth Noemí Orlando Morán", "Destin Melik Ortiz Benítez", "Brandi Fiorela Persíngola Almada", "Walter Alejandro Portillo Barrios", "Santiago Ramires Almada", "Sebastian Ramires Almada", "Lucas Mathias Richter Cañete", "Eithan Roa Melgarejo", "Yeni Diana Román Garcete", "Ruth Gabriela Ruiz Diaz Sala", "Erica Victoria Soares Schueroff", "Guido Ignacio Torres Mareco", "Mía Jamila Trinidad Melgarejo", "María De los Angeles Vázquez Vera", "Marisol Vera Sosa", "Agustina Verón Vera", "Johann Emanuel Wenninger Carrizo"
+            ],
+            "9° Grado - Informática": [
+                "Josué Yasiel Abadíe Epp", "Alvin Edwards Almada Casco", "Helen Janina Barrios González", "Valeria Abigaíl Barrios Rodríguez", "Ruth Jazmín Castillo Fernández", "Victoria Alheli Chamorro Torales", "Dalila Gissel Chávez Benítez", "Osmar Amilkar Contreras Ozuna", "Andre Paulo De Souza Prunzel", "Pablo Gabriel Del Puerto Galeano", "Diego Ariel Fariña Trinidad", "Mateo Gabriel Fleitas Rossi", "Bianca Nicole Friesen Maldonado", "Marbella Carolina García Pavón", "Zunny Verónica González Gómez", "Grace Amelie Happle", "Braian Fernando Hermes Rodriguez", "Kevin René Maldonado López", "Albert Adán Melgarejo Almada", "Romina Morel Gauto", "Ruth Noemí Orlando Morán", "Destin Melik Ortiz Benítez", "Brandi Fiorela Persíngola Almada", "Walter Alejandro Portillo Barrios", "Santiago Ramires Almada", "Sebastian Ramires Almada", "Lucas Mathias Richter Cañete", "Eithan Roa Melgarejo", "Yeni Diana Román Garcete", "Ruth Gabriela Ruiz Diaz Sala", "Erica Victoria Soares Schueroff", "Guido Ignacio Torres Mareco", "Mía Jamila Trinidad Melgarejo", "María De los Angeles Vázquez Vera", "Marisol Vera Sosa", "Agustina Verón Vera", "Johann Emanuel Wenninger Carrizo"
+            ],
+            "9° Grado - Formación Ética y Ciudadana": [
+                "Josué Yasiel Abadíe Epp", "Alvin Edwards Almada Casco", "Helen Janina Barrios González", "Valeria Abigaíl Barrios Rodríguez", "Ruth Jazmín Castillo Fernández", "Victoria Alheli Chamorro Torales", "Dalila Gissel Chávez Benítez", "Osmar Amilkar Contreras Ozuna", "Andre Paulo De Souza Prunzel", "Pablo Gabriel Del Puerto Galeano", "Diego Ariel Fariña Trinidad", "Mateo Gabriel Fleitas Rossi", "Bianca Nicole Friesen Maldonado", "Marbella Carolina García Pavón", "Zunny Verónica González Gómez", "Grace Amelie Happle", "Braian Fernando Hermes Rodriguez", "Kevin René Maldonado López", "Albert Adán Melgarejo Almada", "Romina Morel Gauto", "Ruth Noemí Orlando Morán", "Destin Melik Ortiz Benítez", "Brandi Fiorela Persíngola Almada", "Walter Alejandro Portillo Barrios", "Santiago Ramires Almada", "Sebastian Ramires Almada", "Lucas Mathias Richter Cañete", "Eithan Roa Melgarejo", "Yeni Diana Román Garcete", "Ruth Gabriela Ruiz Diaz Sala", "Erica Victoria Soares Schueroff", "Guido Ignacio Torres Mareco", "Mía Jamila Trinidad Melgarejo", "María De los Angeles Vázquez Vera", "Marisol Vera Sosa", "Agustina Verón Vera", "Johann Emanuel Wenninger Carrizo"
+            ],
+            "1° Curso - Historia y Geografía": [
+                "Vivian Aydee Aquino Orue", "Mathias Daniel Barreto Román", "Shirley Anahí Benítez Martínez", "Jesica Gabriela Bubans Bucholz", "Luan Felipe Bucholz Matheis", "Tamara Carolina Carballo Peralta", "Thamara María Lucía Carballo Romero", "Sandy Julissa Casco Duarte", "Emmanuel Alejandro Centurión Amaral", "Camila Aneliz Enciso Ozuna", "Bárbara María Fiorella Espínola Martínez", "Micael Gustavo Estigarribia Lugo", "Luana Valentina Ferreira Cáceres", "Benjamín Uriel Flores Torres", "Derlis Eliezer Gómez Morel", "María Soledad Gómez Mujica", "Dylan Habib González Fast", "Alba Paloma Hass", "Jonathan Federico Ibarra Casco", "Cristhian Natanael Lopez Marupa", "Ruth María Maidana Ocampos", "Lucas Francisco Martínez Báez", "Paulo Ricardo Metzen Treichel", "Mario Damian Morales González", "Fabian Johannes Müller", "Yeny Fabiola Ortíz Páez", "Yamila Antonella Pereira Candia", "Yanina Antonella Pereira Candia", "Evelyn Fiorella Roa Cardozo", "Gabriela Rojas Morinigo", "María Elizabeth Romero Insfrán", "Sergio Emanuel Sosa Marín", "Oliver Tobías Torres Santacruz", "Hugo Ariel Vera Mujica", "Aileen Mariela Wood Aquino", "Henzo Gabriel Zancan Hartmann"
+            ],
+            "2° Curso - Historia y Geografía": [
+                "Antony Nunzio Amodio", "Enrique Daniel Benítez Núñez", "Tobías Sebastián Carballo Fernández", "Dante Rafael Cibils Eichorn", "William Matías Domínguez Centurión", "Lucas Rhian Guaresi Gimenes", "Edita Monserrath Guillen Almada", "Lucas Tadeo Hartmann Lang", "Belinda Magalí Herberts Del Puerto", "Aramí Monserrat Insfran Alvarenga", "Valeria Thais Ledezma Marín", "Cecilia Belén Martinez Colman", "Danielle Luján Quintana Alvarenga", "Joe Daniel Richter Candia", "Isaias David Rodriguez Gimenez", "Diana Monserrat Sánchez Penayo", "Leticia Victoria Slovinski Federizzi", "Belinda Fiorella Trinidad Cuevas", "Junior Mattías Vera Maciel", "Kevin Eladio Zagaz Alcaraz", "Rodrigo Hernan Zena Miranda"
+            ],
+            "2° Curso - Filosofía": [
+                "Antony Nunzio Amodio", "Enrique Daniel Benítez Núñez", "Tobías Sebastián Carballo Fernández", "Dante Rafael Cibils Eichorn", "William Matías Domínguez Centurión", "Lucas Rhian Guaresi Gimenes", "Edita Monserrath Guillen Almada", "Lucas Tadeo Hartmann Lang", "Belinda Magalí Herberts Del Puerto", "Aramí Monserrat Insfran Alvarenga", "Valeria Thais Ledezma Marín", "Cecilia Belén Martinez Colman", "Danielle Luján Quintana Alvarenga", "Joe Daniel Richter Candia", "Isaias David Rodriguez Gimenez", "Diana Monserrat Sánchez Penayo", "Leticia Victoria Slovinski Federizzi", "Belinda Fiorella Trinidad Cuevas", "Junior Mattías Vera Maciel", "Kevin Eladio Zagaz Alcaraz", "Rodrigo Hernan Zena Miranda"
+            ],
+            "3° Curso - Historia y Geografía": [
+                "Fernanda Lucero Alvarenga Galeano", "Yeny Luisa Barrios", "Santiago Adrián Borja Franco", "Sofía Antonella Cáceres Ferreira", "Zoe Abigail Cáceres Romero", "Efrain Cardozo Noguera", "Samuel Jeremías Chamorro Torales", "Carlos Antonio Chávez Benítez", "Diego Emmanuel Coronel Méndez", "Marcelina Falk Dueck", "Nicole Bianka Falk Friesen", "Samira Milena Franco Lovera", "Andrea Soledad García Bogarín", "Juana Valentina Gimenez Gomez", "Guillermo Luis Gómez Mujica", "Alma María José Gómez Olazar", "María Luisa González Dávalos", "Marcelo Alfonso González Romero", "Melina Abigail Herberts Del Puerto", "Roxy Aramí Insfrán Insaurralde", "Ana Laura Jimenez Quiroga", "Pedro Henrique Metzen Treichel", "Sanny Tatiana Montania Barrios", "Lucas Ruben Nuñez Mendoza", "Alan Ocampos Morinigo", "Dalila Maricel Ortiz Melgarejo", "Ruth Noemí Ortiz Morinigo", "Luz Aylen Penayo Duarte", "Sara Milagros Santacruz Chávez", "María Viviana Torres Ruiz", "Sixta Analia Velazquez Castillo"
+            ],
+            "3° Curso - Política": [
+                "Fernanda Lucero Alvarenga Galeano", "Yeny Luisa Barrios", "Santiago Adrián Borja Franco", "Sofía Antonella Cáceres Ferreira", "Zoe Abigail Cáceres Romero", "Efrain Cardozo Noguera", "Samuel Jeremías Chamorro Torales", "Carlos Antonio Chávez Benítez", "Diego Emmanuel Coronel Méndez", "Marcelina Falk Dueck", "Nicole Bianka Falk Friesen", "Samira Milena Franco Lovera", "Andrea Soledad García Bogarín", "Juana Valentina Gimenez Gomez", "Guillermo Luis Gómez Mujica", "Alma María José Gómez Olazar", "María Luisa González Dávalos", "Marcelo Alfonso González Romero", "Melina Abigail Herberts Del Puerto", "Roxy Aramí Insfrán Insaurralde", "Ana Laura Jimenez Quiroga", "Pedro Henrique Metzen Treichel", "Sanny Tatiana Montania Barrios", "Lucas Ruben Nuñez Mendoza", "Alan Ocampos Morinigo", "Dalila Maricel Ortiz Melgarejo", "Ruth Noemí Ortiz Morinigo", "Luz Aylen Penayo Duarte", "Sara Milagros Santacruz Chávez", "María Viviana Torres Ruiz", "Sixta Analia Velazquez Castillo"
+            ],
+            "3° Curso - Sociología": [
+                "Fernanda Lucero Alvarenga Galeano", "Yeny Luisa Barrios", "Santiago Adrián Borja Franco", "Sofía Antonella Cáceres Ferreira", "Zoe Abigail Cáceres Romero", "Efrain Cardozo Noguera", "Samuel Jeremías Chamorro Torales", "Carlos Antonio Chávez Benítez", "Diego Emmanuel Coronel Méndez", "Marcelina Falk Dueck", "Nicole Bianka Falk Friesen", "Samira Milena Franco Lovera", "Andrea Soledad García Bogarín", "Juana Valentina Gimenez Gomez", "Guillermo Luis Gómez Mujica", "Alma María José Gómez Olazar", "María Luisa González Dávalos", "Marcelo Alfonso González Romero", "Melina Abigail Herberts Del Puerto", "Roxy Aramí Insfrán Insaurralde", "Ana Laura Jimenez Quiroga", "Pedro Henrique Metzen Treichel", "Sanny Tatiana Montania Barrios", "Lucas Ruben Nuñez Mendoza", "Alan Ocampos Morinigo", "Dalila Maricel Ortiz Melgarejo", "Ruth Noemí Ortiz Morinigo", "Luz Aylen Penayo Duarte", "Sara Milagros Santacruz Chávez", "María Viviana Torres Ruiz", "Sixta Analia Velazquez Castillo"
+            ]
+        };
 
-        let fechaClave = ""; let cursoClave = ""; let pathNube = "";
+        let fechaClave = ""; let cursoClave = ""; let pathNube = ""; let listaActualAlumnos = [];
         document.getElementById('input-fecha').valueAsDate = new Date();
 
         function entrarAPlanilla() {
             fechaClave = document.getElementById('input-fecha').value;
             cursoClave = document.getElementById('select-materia').value;
             if(!fechaClave) return alert("Selecciona una fecha.");
+            
+            listaActualAlumnos = baseAlumnos[cursoClave] || [];
             let cursoSanitizado = cursoClave.replace(/[.#$/\[\]]/g, "-");
             pathNube = `planillas/${fechaClave}/${cursoSanitizado}`;
+            
             const partesFecha = fechaClave.split('-');
             const fechaObjeto = new Date(partesFecha[0], partesFecha[1] - 1, partesFecha[2]);
             document.getElementById('reporte-fecha').innerText = fechaObjeto.toLocaleDateString('es-ES', {year:'numeric', month:'long', day:'numeric'});
@@ -212,7 +249,7 @@
         function construirTablaBase() {
             const cuerpo = document.getElementById('tabla-cuerpo');
             cuerpo.innerHTML = ""; 
-            alumnos.forEach((nombre, index) => {
+            listaActualAlumnos.forEach((nombre, index) => {
                 const id = index + 1;
                 let filaHtml = `<tr id="fila-${id}"><td class="col-nombre">${nombre}</td><td><select onchange="actualizarAsistencia(${id})" id="asistencia-${id}" class="table-select p-status"><option value="P">P</option><option value="A">A</option></select></td>`;
                 for (let t = 1; t <= 10; t++) filaHtml += `<td><input type="checkbox" onchange="guardarNube()" id="t${t}-${id}" checked></td>`;
@@ -222,7 +259,7 @@
         }
 
         function actualizarTablaConDatos(datosNube) {
-            alumnos.forEach((_, index) => {
+            listaActualAlumnos.forEach((_, index) => {
                 const id = index + 1; const registro = datosNube ? datosNube[id] : null;
                 if (registro) {
                     document.getElementById(`asistencia-${id}`).value = registro.asistencia;
@@ -256,7 +293,7 @@
 
         function guardarNube() {
             let datosPlanilla = {};
-            alumnos.forEach((_, index) => {
+            listaActualAlumnos.forEach((_, index) => {
                 const id = index + 1; let actividades = [];
                 for (let t = 1; t <= 10; t++) actividades.push(document.getElementById(`t${t}-${id}`).checked);
                 datosPlanilla[id] = { asistencia: document.getElementById(`asistencia-${id}`).value, actividades: actividades, observacion: document.getElementById(`obs-${id}`).value };
