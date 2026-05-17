@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control de Asistencia con Nube</title>
+    <title>Control de Asistencia con Nube e Indicadores</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
@@ -47,34 +47,99 @@
         .btn-pdf:hover { background-color: #b91c1c; }
         .btn-volver { background-color: #64748b; color: white; border: none; padding: 10px 15px; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: background 0.2s; }
         .btn-volver:hover { background-color: #475569; }
+        
+        .cuadro-leyenda {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+        .cuadro-leyenda h3 { margin: 0 0 10px 0; font-size: 14px; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; }
+        .lista-leyenda {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 8px;
+            font-size: 12px;
+            color: #475569;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .lista-leyenda li { background: #f8fafc; padding: 6px 10px; border-radius: 4px; border-left: 3px solid var(--primary); }
+
         table { border-collapse: collapse; width: 100%; background: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden; }
-        th, td { border: 1px solid var(--border); padding: 10px 5px; text-align: center; }
-        th { background-color: #f1f5f9; color: #475569; font-size: 12px; text-transform: uppercase; }
-        .th-vertical { writing-mode: vertical-lr; transform: rotate(180deg); padding: 15px 5px; text-align: left; font-weight: bold; }
+        th, td { border: 1px solid var(--border); padding: 10px 4px; text-align: center; }
+        th { background-color: #f1f5f9; color: #475569; font-size: 11px; text-transform: uppercase; }
+        
+        /* Solución definitiva para las líneas de indicadores verticales */
+        .th-vertical { padding: 0; vertical-align: bottom; }
+        .txt-vertical-wrapper {
+            writing-mode: vertical-lr;
+            transform: rotate(180deg);
+            padding: 15px 5px;
+            text-align: left;
+            font-weight: bold;
+            cursor: help;
+            width: 25px;
+            box-sizing: border-box;
+            margin: 0 auto;
+        }
+
+        .col-num { width: 35px; background-color: #f8fafc; font-size: 12px; color: #64748b; font-weight: bold; }
         .col-nombre { text-align: left; font-weight: 600; width: 220px; padding-left: 15px; }
         .col-asistencia { width: 45px; }
-        .col-nota { width: 110px; }
-        .col-observacion { width: 220px; }
+        .col-nota { width: 115px; }
+        .col-observacion { width: 200px; }
         select.table-select { padding: 5px 2px; font-weight: bold; border-radius: 4px; border: 1px solid var(--border); cursor: pointer; text-align: center; font-size: 14px; width: 40px; }
         select.p-status { color: #16a34a; background-color: #f0fdf4; border-color: #bbf7d0; }
         select.a-status { color: #dc2626; background-color: #fef2f2; border-color: #fca5a5; }
         .txt-obs { width: 95%; min-height: 28px; height: 28px; padding: 4px 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 12px; font-family: inherit; box-sizing: border-box; color: #334155; resize: none; overflow-y: hidden; display: block; margin: 0 auto; }
         .txt-obs:focus { border-color: var(--primary); outline: none; background-color: #fff; }
-        .ausente-row { background-color: var(--bg-ausente); color: var(--text-ausente); }
-        .ausente-row input[type="checkbox"] { pointer-events: none; opacity: 0.1; }
-        .ausente-row .col-nombre { color: var(--text-ausente); }
+        
+        /* Estilos de fila ausente fijos */
+        .ausente-row { background-color: var(--bg-ausente) !important; color: var(--text-ausente) !important; }
+        .ausente-row input[type="checkbox"] { pointer-events: none; opacity: 0.2; }
+        .ausente-row .col-nombre, .ausente-row .col-num { color: var(--text-ausente) !important; }
         .ausente-row .barra-relleno { background: #cbd5e1 !important; width: 0% !important; }
         .ausente-row .txt-obs { background-color: #f1f5f9; color: #94a3b8; }
+        
         input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
         .progreso-contenedor { display: flex; flex-direction: column; align-items: center; gap: 4px; }
         .puntos-txt { font-size: 11px; font-weight: bold; color: #64748b; }
-        .barra-progreso-custom { width: 90px; height: 12px; background-color: #e2e8f0; border: 1px solid #cbd5e1; border-radius: 10px; overflow: hidden; position: relative; }
+        .barra-progreso-custom { width: 95px; height: 12px; background-color: #e2e8f0; border: 1px solid #cbd5e1; border-radius: 10px; overflow: hidden; position: relative; }
         .barra-relleno { height: 100%; width: 100%; background: #16a34a; transition: width 0.3s ease, background-color 0.3s ease; }
+        
         @media print {
             body { background: white; padding: 0; margin: 0; }
             .pantalla-inicio, .botones-acciones { display: none !important; }
             .seccion-planilla { display: block !important; }
-            table { box-shadow: none; }
+            
+            .cuadro-leyenda { 
+                display: block !important; 
+                box-shadow: none; 
+                background: #fff !important; 
+                border: 1px solid #475569 !important;
+                margin-bottom: 15px;
+                page-break-inside: avoid;
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact;
+            }
+            .lista-leyenda { 
+                grid-template-columns: repeat(3, 1fr) !important; 
+                gap: 5px !important; 
+            }
+            .lista-leyenda li { 
+                background: #f8fafc !important; 
+                border-left: 3px solid #1a73e8 !important;
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact;
+            }
+
+            table { box-shadow: none; border-collapse: collapse; }
+            th, td { border: 1px solid #475569 !important; }
+            .col-num { background-color: transparent; }
             select.table-select { border: none; appearance: none; -webkit-appearance: none; background: transparent; padding: 0; width: auto; }
             .txt-obs { border: none; background: transparent; padding: 0; width: 100%; height: auto !important; min-height: 0; overflow: visible; white-space: pre-wrap; word-wrap: break-word; text-align: left; }
             .barra-progreso-custom, .barra-relleno { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -113,7 +178,7 @@
     <div id="seccion-planilla" class="seccion-planilla">
         <div class="header-container">
             <div>
-                <h2 style="margin:0;">Control de Asistencia (Sincronizado)</h2>
+                <h2 style="margin:0;">Control de Asistencia e Indicadores</h2>
                 <div class="info-reporte">
                     <span>Fecha: <span id="reporte-fecha" class="badge"></span></span>
                     <span>Clase: <span id="reporte-curso" class="badge"></span></span>
@@ -126,16 +191,43 @@
             </div>
         </div>
 
+        <div class="cuadro-leyenda">
+            <h3>Referencias de Indicadores Actitudinales (1 Punto c/u)</h3>
+            <ul class="lista-leyenda">
+                <li><strong>Ind 1:</strong> Asiste puntualmente a clases.</li>
+                <li><strong>Ind 2:</strong> Trae el libro de la asignatura.</li>
+                <li><strong>Ind 3:</strong> Trae el cuaderno de trabajo.</li>
+                <li><strong>Ind 4:</strong> Escucha atentamente las instrucciones.</li>
+                <li><strong>Ind 5:</strong> Levanta la mano para pedir la palabra.</li>
+                <li><strong>Ind 6:</strong> Evita conversaciones durante la clase.</li>
+                <li><strong>Ind 7:</strong> Mantiene el orden sin desplazamientos.</li>
+                <li><strong>Ind 8:</strong> Practica hábitos de orden y limpieza.</li>
+                <li><strong>Ind 9:</strong> Respeta las normas de convivencia.</li>
+                <li><strong>Ind 10:</strong> Respeta a docentes y compañeros.</li>
+                <li><strong>Ind 11:</strong> Entrega sus actividades a tiempo.</li>
+                <li><strong>Ind 12:</strong> Demuestra responsabilidad en tareas.</li>
+            </ul>
+        </div>
+
         <table>
             <thead>
                 <tr>
+                    <th class="col-num">#</th>
                     <th class="col-nombre">Estudiante</th>
-                    <th class="th-vertical col-asistencia">Asistencia</th>
-                    <th class="th-vertical">Act 1</th><th class="th-vertical">Act 2</th><th class="th-vertical">Act 3</th>
-                    <th class="th-vertical">Act 4</th><th class="th-vertical">Act 5</th><th class="th-vertical">Act 6</th>
-                    <th class="th-vertical">Act 7</th><th class="th-vertical">Act 8</th><th class="th-vertical">Act 9</th>
-                    <th class="th-vertical">Act 10</th>
-                    <th class="th-vertical col-nota">Nota / Puntaje</th>
+                    <th class="th-vertical col-asistencia"><div class="txt-vertical-wrapper">Asistencia</div></th>
+                    <th class="th-vertical" title="Asiste puntualmente a clases."><div class="txt-vertical-wrapper">Ind 1</div></th>
+                    <th class="th-vertical" title="Trae el libro de la asignatura."><div class="txt-vertical-wrapper">Ind 2</div></th>
+                    <th class="th-vertical" title="Trae el cuaderno de trabajo."><div class="txt-vertical-wrapper">Ind 3</div></th>
+                    <th class="th-vertical" title="Escucha atentamente las instrucciones."><div class="txt-vertical-wrapper">Ind 4</div></th>
+                    <th class="th-vertical" title="Levanta la mano para pedir la palabra."><div class="txt-vertical-wrapper">Ind 5</div></th>
+                    <th class="th-vertical" title="Evita conversaciones durante el desarrollo de la clase."><div class="txt-vertical-wrapper">Ind 6</div></th>
+                    <th class="th-vertical" title="Mantiene el orden evitando desplazamientos innecesarios."><div class="txt-vertical-wrapper">Ind 7</div></th>
+                    <th class="th-vertical" title="Practica hábitos de orden y limpieza."><div class="txt-vertical-wrapper">Ind 8</div></th>
+                    <th class="th-vertical" title="Respeta las normas de convivencia."><div class="txt-vertical-wrapper">Ind 9</div></th>
+                    <th class="th-vertical" title="Respeta a docentes y compañeros."><div class="txt-vertical-wrapper">Ind 10</div></th>
+                    <th class="th-vertical" title="Entrega sus actividades a tiempo."><div class="txt-vertical-wrapper">Ind 11</div></th>
+                    <th class="th-vertical" title="Demuestra responsabilidad en la entrega de tareas."><div class="txt-vertical-wrapper">Ind 12</div></th>
+                    <th class="col-nota">Nota Actitudinal</th>
                     <th class="col-observacion">Observaciones</th>
                 </tr>
             </thead>
@@ -165,7 +257,6 @@
             firebase.initializeApp(firebaseConfig);
         }
 
-        // Base de datos de alumnos por cursos cargada con Nombre + Apellido
         const baseAlumnos = {
             "7° Grado - Historia y Geografía": [
                 "Sofía Micaela Aquino Martínez", "Lucas Sebastian Barreto Román", "Rafael Elias Belen Hildebrandt", "Dahiana Carolina Benítez Silva", "Bianca Gabriela Bobadilla Romero", "Lizzi Abigail Britos Acosta", "Valeria Arami Cáceres Amarilla", "Bianca Fiorella Centurión Amaral", "Dominic César Ian Díaz Alff", "Lucas Gabriel Fleitas Rossi", "Juan Alejandro García Pavón", "Steicy Yuliana Giménez Sandoval", "Yasin Daniel Gomez Servian", "Nora Michelle Gossen Schroeder", "Giuliana Hartmann Lang", "Johannes Sebastian Jürgen Hass Gómez", "Dahiana Hildebrand Ruiz Diaz", "Jhon Arnold Hildebrand Sánchez", "Rosmeri Abigail Insfrán Insaurralde", "Daniela Kaeffer González", "Fiorella Lisette Maldonado Acuña", "Alex Dan Montania Quintana", "Jocias Ezequiel Morán Páez", "Friederike Marie Müller", "Sara Irasema Muñoz Franco", "Valeria Anahí Núñez Peralta", "Aldo Fabian Ozuna Areco", "Oscar Damián Pérez Garcete", "Lucas Emanuel Psosek Da Silva", "Josias Ramón Riquelme Britos", "Richard Adrián Ruiz Diaz González", "Silvia Pilar Anahí Samaniego Franco", "Mía Sofía Lujan Santander Centurión", "David Silva Ruiz", "Eitor Emanuel Slovinski Federizzi", "Jhonnatan Valdez Báez"
@@ -251,9 +342,9 @@
             cuerpo.innerHTML = ""; 
             listaActualAlumnos.forEach((nombre, index) => {
                 const id = index + 1;
-                let filaHtml = `<tr id="fila-${id}"><td class="col-nombre">${nombre}</td><td><select onchange="actualizarAsistencia(${id})" id="asistencia-${id}" class="table-select p-status"><option value="P">P</option><option value="A">A</option></select></td>`;
-                for (let t = 1; t <= 10; t++) filaHtml += `<td><input type="checkbox" onchange="guardarNube()" id="t${t}-${id}" checked></td>`;
-                filaHtml += `<td class="col-nota"><div class="progreso-contenedor"><div class="barra-progreso-custom"><div id="bar-${id}" class="barra-relleno"></div></div><span class="puntos-txt" id="txt-${id}">10 / 10 Pts (100%)</span></div></td><td class="col-observacion"><textarea id="obs-${id}" class="txt-obs" placeholder="Anotar..." oninput="ajustarAltura(this); guardarNube()"></textarea></td></tr>`;
+                let filaHtml = `<tr id="fila-${id}"><td class="col-num">${id}</td><td class="col-nombre">${nombre}</td><td><select onchange="actualizarAsistencia(${id})" id="asistencia-${id}" class="table-select p-status"><option value="P">P</option><option value="A">A</option></select></td>`;
+                for (let t = 1; t <= 12; t++) filaHtml += `<td><input type="checkbox" onchange="guardarNube()" id="t${t}-${id}" checked></td>`;
+                filaHtml += `<td class="col-nota"><div class="progreso-contenedor"><div class="barra-progreso-custom"><div id="bar-${id}" class="barra-relleno"></div></div><span class="puntos-txt" id="txt-${id}">12 / 12 Pts (100%)</span></div></td><td class="col-observacion"><textarea id="obs-${id}" class="txt-obs" placeholder="Anotar..." oninput="ajustarAltura(this); guardarNube()"></textarea></td></tr>`;
                 cuerpo.innerHTML += filaHtml;
             });
         }
@@ -267,7 +358,7 @@
                     const selector = document.getElementById(`asistencia-${id}`); const fila = document.getElementById(`fila-${id}`);
                     if(registro.asistencia === 'A') { selector.className = 'table-select a-status'; fila.classList.add('ausente-row'); }
                     else { selector.className = 'table-select p-status'; fila.classList.remove('ausente-row'); }
-                    for (let t = 1; t <= 10; t++) document.getElementById(`t${t}-${id}`).checked = registro.actividades ? registro.actividades[t-1] : false;
+                    for (let t = 1; t <= 12; t++) document.getElementById(`t${t}-${id}`).checked = registro.actividades ? registro.actividades[t-1] : false;
                 }
                 ajustarAltura(document.getElementById(`obs-${id}`)); calcularProgresoVisual(id);
             });
@@ -278,16 +369,21 @@
         function calcularProgresoVisual(id) {
             const estadoAsistencia = document.getElementById(`asistencia-${id}`).value;
             const barraRelleno = document.getElementById(`bar-${id}`); const texto = document.getElementById(`txt-${id}`);
-            if (estadoAsistencia === 'A') { barraRelleno.style.width = "0%"; barraRelleno.style.backgroundColor = "#cbd5e1"; texto.innerText = "0 / 10 Pts (0%)"; return; }
-            let puntos = 0; for (let t = 1; t <= 10; t++) { if (document.getElementById(`t${t}-${id}`).checked) puntos++; }
-            let porcentaje = puntos * 10; barraRelleno.style.width = `${porcentaje}%`;
-            barraRelleno.style.backgroundColor = `hsl(${(porcentaje / 100) * 120}, 75%, 42%)`; texto.innerText = `${puntos} / 10 Pts (${porcentaje}%)`;
+            if (estadoAsistencia === 'A') { barraRelleno.style.width = "0%"; barraRelleno.style.backgroundColor = "#cbd5e1"; texto.innerText = "0 / 12 Pts (0%)"; return; }
+            
+            let puntos = 0; 
+            for (let t = 1; t <= 12; t++) { if (document.getElementById(`t${t}-${id}`).checked) puntos++; }
+            
+            let porcentaje = Math.round((puntos / 12) * 100); 
+            barraRelleno.style.width = `${porcentaje}%`;
+            barraRelleno.style.backgroundColor = `hsl(${(porcentaje / 100) * 120}, 75%, 42%)`; 
+            texto.innerText = `${puntos} / 12 Pts (${porcentaje}%)`;
         }
 
         function actualizarAsistencia(id) {
             const selector = document.getElementById(`asistencia-${id}`);
-            if (selector.value === 'A') { for (let t = 1; t <= 10; t++) document.getElementById(`t${t}-${id}`).checked = false; }
-            else { for (let t = 1; t <= 10; t++) document.getElementById(`t${t}-${id}`).checked = true; }
+            if (selector.value === 'A') { for (let t = 1; t <= 12; t++) document.getElementById(`t${t}-${id}`).checked = false; }
+            else { for (let t = 1; t <= 12; t++) document.getElementById(`t${t}-${id}`).checked = true; }
             guardarNube();
         }
 
@@ -295,8 +391,13 @@
             let datosPlanilla = {};
             listaActualAlumnos.forEach((_, index) => {
                 const id = index + 1; let actividades = [];
-                for (let t = 1; t <= 10; t++) actividades.push(document.getElementById(`t${t}-${id}`).checked);
+                for (let t = 1; t <= 12; t++) actividades.push(document.getElementById(`t${t}-${id}`).checked);
                 datosPlanilla[id] = { asistencia: document.getElementById(`asistencia-${id}`).value, actividades: actividades, observacion: document.getElementById(`obs-${id}`).value };
+                
+                const selector = document.getElementById(`asistencia-${id}`); const fila = document.getElementById(`fila-${id}`);
+                if(selector.value === 'A') { selector.className = 'table-select a-status'; fila.classList.add('ausente-row'); }
+                else { selector.className = 'table-select p-status'; fila.classList.remove('ausente-row'); }
+
                 calcularProgresoVisual(id);
             });
             if(typeof firebase !== 'undefined' && firebase.apps.length > 0) firebase.database().ref(pathNube).set(datosPlanilla);
