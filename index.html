@@ -39,6 +39,7 @@
         .btn-ingresar { width: 100%; background-color: var(--primary); color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
         .btn-ingresar:hover { background-color: var(--primary-hover); }
         .seccion-planilla { display: none; }
+        
         .header-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .info-reporte { display: flex; gap: 20px; margin-top: 5px; font-size: 14px; color: #64748b; }
         .badge { background: #e2e8f0; padding: 2px 8px; border-radius: 4px; font-weight: bold; color: #334155; }
@@ -69,26 +70,84 @@
         }
         .lista-leyenda li { background: #f8fafc; padding: 6px 10px; border-radius: 4px; border-left: 3px solid var(--primary); }
 
-        table { border-collapse: collapse; width: 100%; background: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden; }
-        th, td { border: 1px solid var(--border); padding: 10px 4px; text-align: center; }
+        .tabla-responsiva {
+            width: 100%;
+            overflow-x: auto;
+            position: relative;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            background: white;
+            border: 1px solid var(--border);
+        }
+
+        table { border-collapse: collapse; width: 100%; background: white; margin: 0; }
+        th, td { border: 1px solid var(--border); padding: 10px 4px; text-align: center; background: white; }
         th { background-color: #f1f5f9; color: #475569; font-size: 11px; text-transform: uppercase; }
         
-        /* Solución definitiva para las líneas de indicadores verticales */
         .th-vertical { padding: 0; vertical-align: bottom; }
+        
+        /* MODIFICADO: Alineación corregida para el flujo de texto vertical */
         .txt-vertical-wrapper {
             writing-mode: vertical-lr;
             transform: rotate(180deg);
             padding: 15px 5px;
             text-align: left;
             font-weight: bold;
-            cursor: help;
             width: 25px;
             box-sizing: border-box;
             margin: 0 auto;
+            display: inline-flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            cursor: help;
         }
 
-        .col-num { width: 35px; background-color: #f8fafc; font-size: 12px; color: #64748b; font-weight: bold; }
-        .col-nombre { text-align: left; font-weight: 600; width: 220px; padding-left: 15px; }
+        /* Estilo para el botón ⓘ móvil y de escritorio */
+        .btn-info-movil {
+            display: inline-block;
+            background: #e2e8f0;
+            color: var(--primary);
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 11px;
+            line-height: 16px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            border: none;
+            transform: rotate(180deg); /* Contrarresta la rotación del padre para que la 'i' no quede al revés */
+        }
+        .btn-info-movil:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .col-num { 
+            width: 35px; 
+            font-size: 12px; 
+            color: #64748b; 
+            font-weight: bold;
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            background-color: #f8fafc;
+        }
+        .col-nombre { 
+            text-align: left; 
+            font-weight: 600; 
+            width: 200px; 
+            padding-left: 15px;
+            position: sticky;
+            left: 35px;
+            z-index: 2;
+            background-color: white;
+            border-right: 2px solid #cbd5e1;
+        }
+        th.col-num, th.col-nombre { background-color: #e2e8f0; z-index: 3; }
+
         .col-asistencia { width: 45px; }
         .col-nota { width: 115px; }
         .col-observacion { width: 200px; }
@@ -98,8 +157,7 @@
         .txt-obs { width: 95%; min-height: 28px; height: 28px; padding: 4px 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 12px; font-family: inherit; box-sizing: border-box; color: #334155; resize: none; overflow-y: hidden; display: block; margin: 0 auto; }
         .txt-obs:focus { border-color: var(--primary); outline: none; background-color: #fff; }
         
-        /* Estilos de fila ausente fijos */
-        .ausente-row { background-color: var(--bg-ausente) !important; color: var(--text-ausente) !important; }
+        .ausente-row td { background-color: var(--bg-ausente) !important; color: var(--text-ausente) !important; }
         .ausente-row input[type="checkbox"] { pointer-events: none; opacity: 0.2; }
         .ausente-row .col-nombre, .ausente-row .col-num { color: var(--text-ausente) !important; }
         .ausente-row .barra-relleno { background: #cbd5e1 !important; width: 0% !important; }
@@ -111,38 +169,30 @@
         .barra-progreso-custom { width: 95px; height: 12px; background-color: #e2e8f0; border: 1px solid #cbd5e1; border-radius: 10px; overflow: hidden; position: relative; }
         .barra-relleno { height: 100%; width: 100%; background: #16a34a; transition: width 0.3s ease, background-color 0.3s ease; }
         
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .header-container { flex-direction: column; align-items: flex-start; gap: 15px; padding: 15px; }
+            .info-reporte { flex-direction: column; gap: 5px; }
+            .botones-acciones { width: 100%; justify-content: space-between; }
+            .btn-pdf, .btn-volver { padding: 8px 12px; font-size: 13px; flex: 1; text-align: center; }
+            .pantalla-inicio { padding: 25px 15px; margin: 20px auto; }
+            .col-nombre { width: 140px; font-size: 13px; }
+        }
+
         @media print {
             body { background: white; padding: 0; margin: 0; }
             .pantalla-inicio, .botones-acciones { display: none !important; }
             .seccion-planilla { display: block !important; }
-            
-            .cuadro-leyenda { 
-                display: block !important; 
-                box-shadow: none; 
-                background: #fff !important; 
-                border: 1px solid #475569 !important;
-                margin-bottom: 15px;
-                page-break-inside: avoid;
-                -webkit-print-color-adjust: exact; 
-                print-color-adjust: exact;
-            }
-            .lista-leyenda { 
-                grid-template-columns: repeat(3, 1fr) !important; 
-                gap: 5px !important; 
-            }
-            .lista-leyenda li { 
-                background: #f8fafc !important; 
-                border-left: 3px solid #1a73e8 !important;
-                -webkit-print-color-adjust: exact; 
-                print-color-adjust: exact;
-            }
-
+            .col-nombre, .col-num { position: static !important; background: transparent !important; }
+            .tabla-responsiva { overflow-x: visible !important; border: none; box-shadow: none; }
+            .btn-info-movil { display: none !important; }
+            .cuadro-leyenda { display: block !important; box-shadow: none; background: #fff !important; border: 1px solid #475569 !important; margin-bottom: 15px; page-break-inside: avoid; }
+            .lista-leyenda { grid-template-columns: repeat(3, 1fr) !important; gap: 5px !important; }
+            .lista-leyenda li { background: #f8fafc !important; border-left: 3px solid #1a73e8 !important; }
             table { box-shadow: none; border-collapse: collapse; }
-            th, td { border: 1px solid #475569 !important; }
-            .col-num { background-color: transparent; }
+            th, td { border: 1px solid #475569 !important; background: transparent !important; }
             select.table-select { border: none; appearance: none; -webkit-appearance: none; background: transparent; padding: 0; width: auto; }
             .txt-obs { border: none; background: transparent; padding: 0; width: 100%; height: auto !important; min-height: 0; overflow: visible; white-space: pre-wrap; word-wrap: break-word; text-align: left; }
-            .barra-progreso-custom, .barra-relleno { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
     </style>
 </head>
@@ -178,7 +228,7 @@
     <div id="seccion-planilla" class="seccion-planilla">
         <div class="header-container">
             <div>
-                <h2 style="margin:0;">Control de Asistencia e Indicadores</h2>
+                <h2 style="margin:0; font-size: 20px;">Control de Asistencia e Indicadores</h2>
                 <div class="info-reporte">
                     <span>Fecha: <span id="reporte-fecha" class="badge"></span></span>
                     <span>Clase: <span id="reporte-curso" class="badge"></span></span>
@@ -209,37 +259,41 @@
             </ul>
         </div>
 
-        <table>
-            <thead>
-                <tr>
-                    <th class="col-num">#</th>
-                    <th class="col-nombre">Estudiante</th>
-                    <th class="th-vertical col-asistencia"><div class="txt-vertical-wrapper">Asistencia</div></th>
-                    <th class="th-vertical" title="Asiste puntualmente a clases."><div class="txt-vertical-wrapper">Ind 1</div></th>
-                    <th class="th-vertical" title="Trae el libro de la asignatura."><div class="txt-vertical-wrapper">Ind 2</div></th>
-                    <th class="th-vertical" title="Trae el cuaderno de trabajo."><div class="txt-vertical-wrapper">Ind 3</div></th>
-                    <th class="th-vertical" title="Escucha atentamente las instrucciones."><div class="txt-vertical-wrapper">Ind 4</div></th>
-                    <th class="th-vertical" title="Levanta la mano para pedir la palabra."><div class="txt-vertical-wrapper">Ind 5</div></th>
-                    <th class="th-vertical" title="Evita conversaciones durante el desarrollo de la clase."><div class="txt-vertical-wrapper">Ind 6</div></th>
-                    <th class="th-vertical" title="Mantiene el orden evitando desplazamientos innecesarios."><div class="txt-vertical-wrapper">Ind 7</div></th>
-                    <th class="th-vertical" title="Practica hábitos de orden y limpieza."><div class="txt-vertical-wrapper">Ind 8</div></th>
-                    <th class="th-vertical" title="Respeta las normas de convivencia."><div class="txt-vertical-wrapper">Ind 9</div></th>
-                    <th class="th-vertical" title="Respeta a docentes y compañeros."><div class="txt-vertical-wrapper">Ind 10</div></th>
-                    <th class="th-vertical" title="Entrega sus actividades a tiempo."><div class="txt-vertical-wrapper">Ind 11</div></th>
-                    <th class="th-vertical" title="Demuestra responsabilidad en la entrega de tareas."><div class="txt-vertical-wrapper">Ind 12</div></th>
-                    <th class="col-nota">Nota Actitudinal</th>
-                    <th class="col-observacion">Observaciones</th>
-                </tr>
-            </thead>
-            <tbody id="tabla-cuerpo"></tbody>
-        </table>
+        <div class="tabla-responsiva">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="col-num">#</th>
+                        <th class="col-nombre">Estudiante</th>
+                        <th class="th-vertical col-asistencia"><div class="txt-vertical-wrapper">Asistencia</div></th>
+                        
+                        <!-- ENCABEZADOS CORREGIDOS: Estructura en línea e icono alineado -->
+                        <th class="th-vertical"><div class="txt-vertical-wrapper" title="Asiste puntualmente a clases.">Ind 1 <span class="btn-info-movil" onclick="verInd(1)">ⓘ</span></div></th>
+                        <th class="th-vertical"><div class="txt-vertical-wrapper" title="Trae el libro de la asignatura.">Ind 2 <span class="btn-info-movil" onclick="verInd(2)">ⓘ</span></div></th>
+                        <th class="th-vertical"><div class="txt-vertical-wrapper" title="Trae el cuaderno de trabajo.">Ind 3 <span class="btn-info-movil" onclick="verInd(3)">ⓘ</span></div></th>
+                        <th class="th-vertical"><div class="txt-vertical-wrapper" title="Escucha atentamente las instrucciones.">Ind 4 <span class="btn-info-movil" onclick="verInd(4)">ⓘ</span></div></th>
+                        <th class="th-vertical"><div class="txt-vertical-wrapper" title="Levanta la mano para pedir la palabra.">Ind 5 <span class="btn-info-movil" onclick="verInd(5)">ⓘ</span></div></th>
+                        <th class="th-vertical"><div class="txt-vertical-wrapper" title="Evita conversaciones durante el desarrollo de la clase.">Ind 6 <span class="btn-info-movil" onclick="verInd(6)">ⓘ</span></div></th>
+                        <th class="th-vertical"><div class="txt-vertical-wrapper" title="Mantiene el orden evitando desplazamientos innecesarios.">Ind 7 <span class="btn-info-movil" onclick="verInd(7)">ⓘ</span></div></th>
+                        <th class="th-vertical"><div class="txt-vertical-wrapper" title="Practica hábitos de orden y limpieza.">Ind 8 <span class="btn-info-movil" onclick="verInd(8)">ⓘ</span></div></th>
+                        <th class="th-vertical"><div class="txt-vertical-wrapper" title="Respeta las normas de convivencia.">Ind 9 <span class="btn-info-movil" onclick="verInd(9)">ⓘ</span></div></th>
+                        <th class="th-vertical"><div class="txt-vertical-wrapper" title="Respeta a docentes y compañeros.">Ind 10 <span class="btn-info-movil" onclick="verInd(10)">ⓘ</span></div></th>
+                        <th class="th-vertical"><div class="txt-vertical-wrapper" title="Entrega sus actividades a tiempo.">Ind 11 <span class="btn-info-movil" onclick="verInd(11)">ⓘ</span></div></th>
+                        <th class="th-vertical"><div class="txt-vertical-wrapper" title="Demuestra responsabilidad en la entrega de tareas.">Ind 12 <span class="btn-info-movil" onclick="verInd(12)">ⓘ</span></div></th>
+                        
+                        <th class="col-nota">Nota Actitudinal</th>
+                        <th class="col-observacion">Observaciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-cuerpo"></tbody>
+            </table>
+        </div>
     </div>
 
     <script>
         // =================================================================
         // PASO FINAL: PEGA AQUÍ ABAJO TUS DATOS DE FIREBASE
         // =================================================================
-        
         const firebaseConfig = {
   apiKey: "AIzaSyC6X63w2PKh6F7e-Rx9TxkP8Jy-iJBn6EY",
   authDomain: "misnotasescolares-65e9f.firebaseapp.com",
@@ -250,11 +304,29 @@
   appId: "1:213859418577:web:52dae4504094be9a9420f0",
   measurementId: "G-LBEX51GBWP"
 		};
-        
         // =================================================================
 
         if(firebaseConfig.apiKey !== "TU_API_KEY") {
             firebase.initializeApp(firebaseConfig);
+        }
+
+        const textosIndicadores = {
+            1: "Asiste puntualmente a clases.",
+            2: "Trae el libro de la asignatura.",
+            3: "Trae el cuaderno de trabajo.",
+            4: "Escucha atentamente las instrucciones.",
+            5: "Levanta la mano para pedir la palabra.",
+            6: "Evita conversaciones durante el desarrollo de la clase.",
+            7: "Mantiene el orden evitando desplazamientos innecesarios.",
+            8: "Practica hábitos de orden y limpieza.",
+            9: "Respeta las normas de convivencia.",
+            10: "Respeta a docentes y compañeros.",
+            11: "Entrega sus actividades a tiempo.",
+            12: "Demuestra responsabilidad en la entrega de tareas."
+        };
+
+        function verInd(numero) {
+            alert(`Indicador ${numero}:\n${textosIndicadores[numero]}`);
         }
 
         const baseAlumnos = {
@@ -394,7 +466,7 @@
                 for (let t = 1; t <= 12; t++) actividades.push(document.getElementById(`t${t}-${id}`).checked);
                 datosPlanilla[id] = { asistencia: document.getElementById(`asistencia-${id}`).value, actividades: actividades, observacion: document.getElementById(`obs-${id}`).value };
                 
-                const selector = document.getElementById(`asistencia-${id}`); const fila = document.getElementById(`fila-${id}`);
+                const selector = document.getElementById(`asistencia-${id}`); const fila = document.getElementById('fila-' + id);
                 if(selector.value === 'A') { selector.className = 'table-select a-status'; fila.classList.add('ausente-row'); }
                 else { selector.className = 'table-select p-status'; fila.classList.remove('ausente-row'); }
 
